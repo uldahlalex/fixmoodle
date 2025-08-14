@@ -3,7 +3,10 @@
   "name": "Moodle TinyMCE Auto-Resizer",
   "version": "1.0",
   "description": "Automatically makes TinyMCE editors larger on Moodle sites",
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "management"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["*://*/*"],

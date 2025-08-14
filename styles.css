@@ -1,29 +1,33 @@
 /* Moodle TinyMCE Auto-Resizer Styles */
 
-/* Force minimum height on TinyMCE containers */
+/* Force maximum height on TinyMCE containers */
 .tox.tox-tinymce {
-    min-height: 400px !important;
+    min-height: 80vh !important;
+    height: 80vh !important;
 }
 
 /* Ensure the edit area is properly sized */
 .tox-edit-area {
-    min-height: 350px !important;
+    min-height: 75vh !important;
+    height: 75vh !important;
 }
 
 /* Size the iframe that contains the actual editor */
 .tox-edit-area__iframe {
-    min-height: 350px !important;
+    min-height: 75vh !important;
+    height: 75vh !important;
 }
 
 /* Adjust the sidebar wrap container */
 .tox-sidebar-wrap {
-    min-height: 350px !important;
-    height: auto !important;
+    min-height: 75vh !important;
+    height: 75vh !important;
 }
 
 /* Make sure the editor doesn't get cut off */
 .tox-editor-container {
-    min-height: 400px !important;
+    min-height: 80vh !important;
+    height: 80vh !important;
 }
 
 /* Optional: Make the resize handle more visible */
@@ -31,4 +35,97 @@
     background-color: #f0f0f0 !important;
     border: 1px solid #ccc !important;
     border-radius: 3px !important;
+}
+
+/* Hide Moodle sidebars when TinyMCE editor is present */
+body.editor-fullwidth #block-region-side-pre,
+body.editor-fullwidth #block-region-side-post,
+body.editor-fullwidth .block-region,
+body.editor-fullwidth [data-region="blocks-column"],
+body.editor-fullwidth .blocks,
+body.editor-fullwidth #page-sidebar,
+body.editor-fullwidth .sidebar,
+body.editor-fullwidth .drawer {
+    display: none !important;
+}
+
+/* Expand main content area to use full width when editor is active */
+body.editor-fullwidth #region-main,
+body.editor-fullwidth .region-content,
+body.editor-fullwidth #page-content,
+body.editor-fullwidth .main-content,
+body.editor-fullwidth [data-region="mainpage"],
+body.editor-fullwidth .content-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    float: none !important;
+}
+
+/* Make the page wrapper use full width */
+body.editor-fullwidth #page,
+body.editor-fullwidth #page-wrapper,
+body.editor-fullwidth .pagelayout,
+body.editor-fullwidth #wrapper,
+body.editor-fullwidth #topofscroll {
+    max-width: 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+}
+
+/* Force main content to ignore drawer space and use full width */
+body.editor-fullwidth .main-inner,
+body.editor-fullwidth #page-content,
+body.editor-fullwidth .content-container {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+/* Make form element container use full width */
+body.editor-fullwidth .col-md-9.d-flex.flex-wrap.align-items-start.felement {
+    min-width: 100% !important;
+    flex: 1 1 100% !important;
+}
+
+/* Ensure TinyMCE containers can use the full available width */
+body.editor-fullwidth .tox.tox-tinymce {
+    width: 100% !important;
+    max-width: calc(100vw - 40px) !important;
+}
+
+/* Hide drawers by default but allow manual showing when .show class is present */
+body.editor-fullwidth [data-region="drawer"]:not(.drawercontent):not(.drag-container):not(.show),
+body.editor-fullwidth .drawer-left:not(.drawercontent):not(.drag-container):not(.show),
+body.editor-fullwidth .drawer-right:not(.drawercontent):not(.drag-container):not(.show),
+body.editor-fullwidth .drawer-primary:not(.drawercontent):not(.drag-container):not(.show) {
+    display: none !important;
+}
+
+/* Hide specific right drawer with max-width approach only when not manually shown */
+body.editor-fullwidth .drawer.drawer-right.no_toggle:not(.drawercontent):not(.drag-container) {
+    max-width: 0 !important;
+    overflow: hidden !important;
+    width: 0 !important;
+}
+
+/* Allow manually shown drawers to appear with proper positioning */
+body.editor-fullwidth .drawer.show {
+    display: block !important;
+    position: fixed !important;
+    z-index: 10000 !important;
+}
+
+/* Also hide any drawer container that might be wrapping it, but preserve drawercontent */
+body.editor-fullwidth .drawer-container:not(.drawercontent):not(.drag-container),
+body.editor-fullwidth [data-region="drawer-container"]:not(.drawercontent):not(.drag-container) {
+    display: none !important;
+}
+
+/* Ensure important buttons remain visible even if inside hidden containers */
+body.editor-fullwidth .btn.icon-no-margin {
+    display: block !important;
+    position: relative !important;
+    z-index: 9999 !important;
 }
