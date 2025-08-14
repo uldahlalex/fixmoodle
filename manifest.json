@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Moodle TinyMCE Auto-Resizer",
+  "version": "1.0",
+  "description": "Automatically makes TinyMCE editors larger on Moodle sites",
+  "permissions": ["activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ]
+}

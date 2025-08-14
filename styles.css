@@ -1,0 +1,34 @@
+/* Moodle TinyMCE Auto-Resizer Styles */
+
+/* Force minimum height on TinyMCE containers */
+.tox.tox-tinymce {
+    min-height: 400px !important;
+}
+
+/* Ensure the edit area is properly sized */
+.tox-edit-area {
+    min-height: 350px !important;
+}
+
+/* Size the iframe that contains the actual editor */
+.tox-edit-area__iframe {
+    min-height: 350px !important;
+}
+
+/* Adjust the sidebar wrap container */
+.tox-sidebar-wrap {
+    min-height: 350px !important;
+    height: auto !important;
+}
+
+/* Make sure the editor doesn't get cut off */
+.tox-editor-container {
+    min-height: 400px !important;
+}
+
+/* Optional: Make the resize handle more visible */
+.tox-statusbar__resize-handle {
+    background-color: #f0f0f0 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 3px !important;
+}
