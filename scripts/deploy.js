@@ -29,32 +29,71 @@ function createZip(sourceDir, outputPath) {
 
 async function deploy() {
     try {
+        // Check if tag already exists
+        try {
+            execSync(`git rev-parse ${tagName}`, { stdio: 'pipe' });
+            console.log(`⚠️  Tag ${tagName} already exists locally. Use a different version or delete the tag first.`);
+            return;
+        } catch {
+            // Tag doesn't exist, continue
+        }
+
         // Build the extension
         console.log('🏗️  Building extension...');
         execSync('npm run build', { stdio: 'inherit' });
 
+        // Build Firefox version too
+        console.log('🦊 Building Firefox version...');
+        execSync('npm run build:firefox', { stdio: 'inherit' });
+
         // Create zips
         console.log('📦 Creating zip files...');
-        await createZip('.output/chrome-mv3', 'chrome-extension.zip');
-        await createZip('.output/firefox-mv2', 'firefox-extension.zip');
+        const chromeZipName = `moodle-tinymce-auto-resizer-${version}-chrome.zip`;
+        const firefoxZipName = `moodle-tinymce-auto-resizer-${version}-firefox.zip`;
+        
+        await createZip('.output/chrome-mv3', chromeZipName);
+        await createZip('.output/firefox-mv2', firefoxZipName);
 
         console.log('✅ Zip files created');
 
+        // Create release notes
+        const releaseNotes = `# Moodle TinyMCE Auto-Resizer ${tagName}
+
+**What's included:**
+- \`${chromeZipName}\` - Chrome/Edge extension (Manifest V3)
+- \`${firefoxZipName}\` - Firefox extension (Manifest V2)
+
+**Features:**
+- Only activates on Moodle editing pages (won't affect dashboard or other pages)
+- Hide drawer/sidebar for more screen space
+- Maximize TinyMCE editor height
+- Customizable settings via popup
+
+**Installation:**
+1. Download the appropriate zip file for your browser
+2. Extract the zip file
+3. Load the extracted folder as an unpacked extension in your browser`;
+
         // Create release with GitHub CLI
         console.log('🎉 Creating GitHub release...');
-        execSync(`gh release create ${tagName} chrome-extension.zip firefox-extension.zip --repo uldahlalex/fixmoodle --title "Release ${tagName}" --notes "Automated release of FixMoodle extension"`, { stdio: 'inherit' });
+        execSync(`gh release create ${tagName} "${chromeZipName}" "${firefoxZipName}" --repo uldahlalex/fixmoodle --title "Release ${tagName}" --notes "${releaseNotes}"`, { stdio: 'inherit' });
 
         // Cleanup
-        fs.unlinkSync('chrome-extension.zip');
-        fs.unlinkSync('firefox-extension.zip');
+        fs.unlinkSync(chromeZipName);
+        fs.unlinkSync(firefoxZipName);
 
         console.log('✅ Release created successfully!');
         console.log(`🔗 View at: https://github.com/uldahlalex/fixmoodle/releases/tag/${tagName}`);
 
     } catch (error) {
         console.error('❌ Deploy failed:', error.message);
+        // Cleanup on failure
+        try {
+            fs.unlinkSync(`moodle-tinymce-auto-resizer-${version}-chrome.zip`);
+            fs.unlinkSync(`moodle-tinymce-auto-resizer-${version}-firefox.zip`);
+        } catch {}
         process.exit(1);
     }
 }
 
-deploy();
+deploy().catch(console.error);
