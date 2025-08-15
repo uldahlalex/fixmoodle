@@ -1,1 +1,38 @@
-.idea
+# Dependencies
+node_modules/
+
+# Build outputs
+.output/
+dist/
+*.zip
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+
+# Extension artifacts
+*.crx
+*.pem
+
+# Old extension files (use .output/ for WXT builds)
+background.js
+content.js
+manifest.json
+popup.html
+popup.js
+styles.css
+assets/content.css

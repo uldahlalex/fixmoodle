@@ -1,0 +1,33 @@
+{
+  "name": "moodle-tinymce-auto-resizer",
+  "version": "1.0.0",
+  "description": "Automatically makes TinyMCE editors larger on Moodle sites with customizable controls",
+  "type": "module",
+  "scripts": {
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "zip": "wxt zip",
+    "compile": "tsc --noEmit",
+    "postinstall": "wxt prepare",
+    "deploy": "npm run build && npm run create-release",
+    "create-release": "node scripts/deploy.js"
+  },
+  "devDependencies": {
+    "archiver": "^7.0.1",
+    "@types/chrome": "^0.0.268",
+    "@types/node": "^20.14.10",
+    "typescript": "^5.5.3",
+    "wxt": "^0.19.9"
+  },
+  "keywords": [
+    "chrome-extension",
+    "moodle",
+    "tinymce",
+    "editor",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

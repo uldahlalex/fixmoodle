@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="header">Moodle Editor Controls</div>
+    
+    <div class="toggle-section">
+        <div class="toggle-item">
+            <div>
+                <div class="toggle-label">Hide Right Drawer</div>
+                <div class="description">Hide the right sidebar to give editor more width</div>
+            </div>
+            <label class="toggle-switch">
+                <input type="checkbox" id="hideDrawer">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <div class="toggle-item">
+            <div>
+                <div class="toggle-label">Maximize Editor</div>
+                <div class="description">Make editor use maximum height and width</div>
+            </div>
+            <label class="toggle-switch">
+                <input type="checkbox" id="maximizeEditor">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+    
+    <div class="status" id="status">Loading...</div>
+    
+    <script type="module" src="./main.ts"></script>
+</body>
+</html>
