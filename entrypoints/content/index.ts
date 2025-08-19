@@ -59,6 +59,23 @@ export default defineContentScript({
             border-radius: 3px !important;
         }
         
+        /* Sticky toolbar to prevent it from going out of view when scrolling */
+        .tox-toolbar,
+        .tox-toolbar-overlord,
+        .tox-menubar {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 1000 !important;
+            background-color: #f4f4f4 !important;
+            border-bottom: 1px solid #ccc !important;
+        }
+        
+        /* Ensure toolbar container maintains proper positioning */
+        .tox-toolbar__primary {
+            position: relative !important;
+            z-index: 1001 !important;
+        }
+        
         /* Hide Moodle sidebars when drawer hiding is enabled */
         body.hide-drawer #block-region-side-pre,
         body.hide-drawer #block-region-side-post,
