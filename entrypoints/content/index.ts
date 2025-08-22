@@ -76,28 +76,25 @@ export default defineContentScript({
             z-index: 1001 !important;
         }
         
-        /* Hide Moodle sidebars when drawer hiding is enabled */
-        body.hide-drawer #block-region-side-pre,
+        /* Hide RIGHT Moodle sidebars when drawer hiding is enabled */
         body.hide-drawer #block-region-side-post,
-        body.hide-drawer .block-region,
-        body.hide-drawer [data-region="blocks-column"],
-        body.hide-drawer .blocks,
-        body.hide-drawer #page-sidebar,
-        body.hide-drawer .sidebar,
-        body.hide-drawer .drawer {
+        body.hide-drawer .block-region:not(#block-region-side-pre),
+        body.hide-drawer [data-region="blocks-column"]:not(.left),
+        body.hide-drawer .blocks:not(.left-blocks),
+        body.hide-drawer #page-sidebar:not(.left),
+        body.hide-drawer .sidebar:not(.left),
+        body.hide-drawer .drawer.drawer-right {
             display: none !important;
         }
         
-        /* Expand main content area to use full width when drawer hiding is enabled */
+        /* Adjust main content area to use remaining width after left drawer when drawer hiding is enabled */
         body.hide-drawer #region-main,
         body.hide-drawer .region-content,
         body.hide-drawer #page-content,
         body.hide-drawer .main-content,
         body.hide-drawer [data-region="mainpage"],
         body.hide-drawer .content-area {
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
+            margin-right: 0 !important;
             float: none !important;
         }
         
@@ -112,13 +109,11 @@ export default defineContentScript({
             min-width: 100% !important;
         }
         
-        /* Force main content to ignore drawer space and use full width when drawer hiding is enabled */
+        /* Adjust main content to respect left drawer but ignore right drawer space when drawer hiding is enabled */
         body.hide-drawer .main-inner,
         body.hide-drawer #page-content,
         body.hide-drawer .content-container {
-            margin-left: 0 !important;
             margin-right: 0 !important;
-            padding-left: 15px !important;
             padding-right: 15px !important;
         }
         
@@ -134,6 +129,16 @@ export default defineContentScript({
             height: 80vh !important;
             width: 100% !important;
             max-width: calc(100vw - 40px) !important;
+        }
+        
+        /* When drawer hiding is enabled, ensure editor doesn't overlap with left drawer */
+        body.hide-drawer.maximize-editor .tox.tox-tinymce {
+            margin-left: 0 !important;
+        }
+        
+        /* Ensure TinyMCE respects left drawer space in normal layout */
+        body.hide-drawer .tox.tox-tinymce {
+            margin-left: 0 !important;
         }
         
         body.maximize-editor .tox-edit-area {
@@ -156,11 +161,9 @@ export default defineContentScript({
             height: 80vh !important;
         }
         
-        /* Hide drawers when drawer hiding is enabled, but allow manual showing when .show class is present */
-        body.hide-drawer [data-region="drawer"]:not(.drawercontent):not(.drag-container):not(.show),
-        body.hide-drawer .drawer-left:not(.drawercontent):not(.drag-container):not(.show),
-        body.hide-drawer .drawer-right:not(.drawercontent):not(.drag-container):not(.show),
-        body.hide-drawer .drawer-primary:not(.drawercontent):not(.drag-container):not(.show) {
+        /* Hide RIGHT drawers when drawer hiding is enabled, but allow manual showing when .show class is present */
+        body.hide-drawer [data-region="drawer"].drawer-right:not(.drawercontent):not(.drag-container):not(.show),
+        body.hide-drawer .drawer-right:not(.drawercontent):not(.drag-container):not(.show) {
             display: none !important;
         }
         
@@ -171,16 +174,16 @@ export default defineContentScript({
             width: 0 !important;
         }
         
-        /* Allow manually shown drawers to appear with proper positioning when drawer hiding is enabled */
-        body.hide-drawer .drawer.show {
+        /* Allow manually shown RIGHT drawers to appear with proper positioning when drawer hiding is enabled */
+        body.hide-drawer .drawer.drawer-right.show {
             display: block !important;
             position: fixed !important;
             z-index: 10000 !important;
         }
         
-        /* Also hide any drawer container that might be wrapping it, but preserve drawercontent */
-        body.hide-drawer .drawer-container:not(.drawercontent):not(.drag-container),
-        body.hide-drawer [data-region="drawer-container"]:not(.drawercontent):not(.drag-container) {
+        /* Also hide any RIGHT drawer container that might be wrapping it, but preserve drawercontent */
+        body.hide-drawer .drawer-container.right:not(.drawercontent):not(.drag-container),
+        body.hide-drawer [data-region="drawer-container"].right:not(.drawercontent):not(.drag-container) {
             display: none !important;
         }
         
@@ -208,18 +211,13 @@ export default defineContentScript({
 
     // Apply current settings to the page
     function applySettings(): void {
-      // Apply drawer hiding
-      if (currentSettings.hideDrawer) {
-        document.body.classList.add('hide-drawer');
-      } else {
-        document.body.classList.remove('hide-drawer');
-      }
-      
-      // Apply editor maximization
+      // Apply both drawer hiding and editor maximization when maximizeEditor is enabled
       if (currentSettings.maximizeEditor) {
+        document.body.classList.add('hide-drawer');
         document.body.classList.add('maximize-editor');
         EditorUtils.resizeEditors();
       } else {
+        document.body.classList.remove('hide-drawer');
         document.body.classList.remove('maximize-editor');
         EditorUtils.resetEditors();
       }

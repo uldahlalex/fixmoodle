@@ -2,16 +2,14 @@ import { SettingsStorage } from '~/utils/storage';
 import type { ExtensionSettings, MessageRequest } from '~/types/settings';
 
 class PopupController {
-  private hideDrawerToggle: HTMLInputElement;
   private maximizeEditorToggle: HTMLInputElement;
   private statusElement: HTMLElement;
 
   constructor() {
-    this.hideDrawerToggle = document.getElementById('hideDrawer') as HTMLInputElement;
     this.maximizeEditorToggle = document.getElementById('maximizeEditor') as HTMLInputElement;
     this.statusElement = document.getElementById('status') as HTMLElement;
 
-    if (!this.hideDrawerToggle || !this.maximizeEditorToggle || !this.statusElement) {
+    if (!this.maximizeEditorToggle || !this.statusElement) {
       throw new Error('Required DOM elements not found');
     }
 
@@ -31,15 +29,10 @@ class PopupController {
 
   private async loadSettings(): Promise<void> {
     const settings = await SettingsStorage.get();
-    this.hideDrawerToggle.checked = settings.hideDrawer;
     this.maximizeEditorToggle.checked = settings.maximizeEditor;
   }
 
   private setupEventListeners(): void {
-    this.hideDrawerToggle.addEventListener('change', () => {
-      this.handleSettingChange('hideDrawer', this.hideDrawerToggle.checked);
-    });
-
     this.maximizeEditorToggle.addEventListener('change', () => {
       this.handleSettingChange('maximizeEditor', this.maximizeEditorToggle.checked);
     });
@@ -58,14 +51,10 @@ class PopupController {
 
   private updateStatus(): void {
     let statusText = '';
-    if (this.hideDrawerToggle.checked && this.maximizeEditorToggle.checked) {
-      statusText = 'Full enhancement active';
-    } else if (this.hideDrawerToggle.checked) {
-      statusText = 'Drawer hiding active';
-    } else if (this.maximizeEditorToggle.checked) {
+    if (this.maximizeEditorToggle.checked) {
       statusText = 'Editor maximized';
     } else {
-      statusText = 'All features disabled';
+      statusText = 'Editor enhancement disabled';
     }
     this.statusElement.textContent = statusText;
   }

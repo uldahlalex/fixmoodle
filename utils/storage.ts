@@ -6,7 +6,6 @@ export class SettingsStorage {
     try {
       const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
       return {
-        hideDrawer: settings.hideDrawer ?? DEFAULT_SETTINGS.hideDrawer,
         maximizeEditor: settings.maximizeEditor ?? DEFAULT_SETTINGS.maximizeEditor,
       };
     } catch (error) {

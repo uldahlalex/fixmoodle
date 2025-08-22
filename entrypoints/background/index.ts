@@ -13,7 +13,6 @@ export default defineBackground(() => {
     // Set default settings on first install
     if (details.reason === 'install') {
       chrome.storage.sync.set({
-        hideDrawer: true,
         maximizeEditor: true,
       }).catch(console.error);
     }

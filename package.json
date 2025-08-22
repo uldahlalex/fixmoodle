@@ -1,6 +1,6 @@
 {
   "name": "moodle-tinymce-auto-resizer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Automatically makes TinyMCE editors larger on Moodle sites with customizable controls",
   "type": "module",
   "scripts": {

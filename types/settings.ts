@@ -1,11 +1,9 @@
 export interface ExtensionSettings {
-  hideDrawer: boolean;
   maximizeEditor: boolean;
 }
 
 export const DEFAULT_SETTINGS: ExtensionSettings = {
-  hideDrawer: true,
-  maximizeEditor: true,
+  maximizeEditor: false,
 };
 
 export interface MessageRequest {
