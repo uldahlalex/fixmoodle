@@ -1,0 +1,130 @@
+<script type="text/javascript">
+tinymce.init({
+    selector: "textarea",
+    plugins: [
+        // Your existing plugins
+        "advlist", "anchor", "autolink", "charmap", "code", "fullscreen",
+        "help", "image", "insertdatetime", "link", "lists", "media",
+        "preview", "searchreplace", "table", "visualblocks",
+        
+        // Popular additional plugins for TinyMCE 8
+        "accordion", "autosave", "codesample", "directionality", 
+        "emoticons", "importcss", "nonbreaking", "pagebreak", 
+        "quickbars", "save", "template", "visualchars", "wordcount"
+    ],
+    
+    // Enhanced toolbar with more features
+    toolbar: [
+        "undo redo | styles fontsize | bold italic underline strikethrough | forecolor backcolor",
+        "alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | blockquote",
+        "link unlink image media table | codesample emoticons charmap | insertdatetime",
+        "searchreplace visualblocks visualchars | code preview fullscreen help"
+    ],
+    
+    // Enable menubar for full feature access
+    menubar: "file edit view insert format tools table help",
+    
+    // Quick selection toolbar
+    quickbars_selection_toolbar: "bold italic underline | quicklink h2 h3 blockquote quicktable",
+    quickbars_insert_toolbar: "quickimage quicktable media codesample",
+    
+    // Enable context menu
+    contextmenu: "link image table configurepermanentpen",
+    
+    // Content styling
+    content_style: `
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            font-size: 14px; 
+            line-height: 1.6; 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        blockquote { 
+            border-left: 3px solid #ccc; 
+            margin-left: 0; 
+            padding-left: 16px; 
+            font-style: italic; 
+        }
+    `,
+    
+    // Code sample languages
+    codesample_languages: [
+        {text: 'HTML/XML', value: 'markup'},
+        {text: 'JavaScript', value: 'javascript'},
+        {text: 'CSS', value: 'css'},
+        {text: 'Python', value: 'python'},
+        {text: 'Java', value: 'java'},
+        {text: 'C#', value: 'csharp'},
+        {text: 'PHP', value: 'php'},
+        {text: 'SQL', value: 'sql'},
+        {text: 'JSON', value: 'json'}
+    ],
+    
+    // Templates
+    templates: [
+        {
+            title: 'Article Template',
+            description: 'Basic article structure',
+            content: '<h1>Article Title</h1><p><em>Brief introduction...</em></p><h2>Main Content</h2><p>Your content here...</p><h2>Conclusion</h2><p>Summary and final thoughts...</p>'
+        },
+        {
+            title: 'Meeting Notes',
+            description: 'Meeting notes template',
+            content: '<h1>Meeting Notes</h1><p><strong>Date:</strong> </p><p><strong>Attendees:</strong> </p><h2>Agenda</h2><ul><li>Item 1</li><li>Item 2</li></ul><h2>Action Items</h2><ul><li>Task - Assigned to: </li></ul>'
+        }
+    ],
+    
+    // Auto-save settings
+    autosave_ask_before_unload: true,
+    autosave_interval: "30s",
+    autosave_retention: "2m",
+    
+    // Image upload handler (placeholder)
+    images_upload_handler: function (blobInfo, success, failure) {
+        // In real implementation, upload to your server
+        // For demo purposes:
+        success('https://picsum.photos/800/400');
+    },
+    
+    // File picker callback
+    file_picker_callback: function (callback, value, meta) {
+        if (meta.filetype === 'image') {
+            // In real implementation, open your file picker
+            // For demo:
+            callback('https://picsum.photos/800/400', {alt: 'Demo image'});
+        }
+    },
+    
+    // Additional useful settings
+    height: 500,
+    resize: 'both',
+    statusbar: true,
+    browser_spellcheck: true,
+    contextmenu_never_use_native: true,
+    
+    // Smart paste
+    smart_paste: true,
+    
+    // Table settings
+    table_use_colgroups: true,
+    table_sizing_mode: 'responsive',
+    
+    // Setup function for additional customization
+    setup: function (editor) {
+        // Custom button example
+        editor.ui.registry.addButton('customInsert', {
+            text: 'Custom',
+            tooltip: 'Insert custom content',
+            onAction: function () {
+                editor.insertContent('<p style="background-color: #f0f8ff; padding: 10px; border-left: 4px solid #0066cc;">💡 <strong>Custom Note:</strong> This is custom inserted content!</p>');
+            }
+        });
+        
+        // Add to toolbar by including 'customInsert' in toolbar array above
+    }
+});
+</script>
+<form method="post" action="/dump">
+    <textarea name="content"></textarea>
+</form>
