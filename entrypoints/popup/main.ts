@@ -72,7 +72,6 @@ class PopupController {
         await chrome.tabs.sendMessage(tab.id, message);
       }
     } catch (error) {
-      // Content script might not be loaded on this tab, that's okay
       console.log('Content script not available on this tab');
     }
   }

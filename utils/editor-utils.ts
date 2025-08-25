@@ -7,15 +7,12 @@ export class EditorUtils {
     const containers = this.getTinyMCEContainers();
     
     containers.forEach(container => {
-      // Calculate maximum available height (80% of viewport height)
       const maxHeight = Math.max(600, window.innerHeight * 0.8);
-      const editAreaHeight = maxHeight - 50; // Account for toolbar and statusbar
+      const editAreaHeight = maxHeight - 50;
       
-      // Set height for the entire editor to use maximum available space
       container.style.minHeight = `${maxHeight}px`;
       container.style.height = `${maxHeight}px`;
 
-      // Resize child elements
       const editArea = container.querySelector<HTMLElement>('.tox-edit-area');
       if (editArea) {
         editArea.style.minHeight = `${editAreaHeight}px`;
@@ -40,7 +37,6 @@ export class EditorUtils {
     const containers = this.getTinyMCEContainers();
     
     containers.forEach(container => {
-      // Remove inline styles
       container.style.minHeight = '';
       container.style.height = '';
 
@@ -68,11 +64,10 @@ export class EditorUtils {
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === 'childList') {
-          // Check for added or removed TinyMCE editors
           const hasEditorChanges = Array.from(mutation.addedNodes)
             .concat(Array.from(mutation.removedNodes))
             .some((node) => {
-              if (node.nodeType === 1) { // Element node
+              if (node.nodeType === 1) {
                 const element = node as Element;
                 return element.classList?.contains('tox-tinymce') || 
                        element.querySelector?.('.tox-tinymce');
