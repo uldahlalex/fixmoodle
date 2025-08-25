@@ -140,31 +140,6 @@ export default defineContentScript({
             border-bottom: 1px solid #ddd !important;
         }
         
-        /* Ensure TinyMCE menu dropdowns appear above everything else */
-        .tox-menu, .tox-collection, .tox-collection--list, .tox-selected-menu {
-            z-index: 2147483647 !important;
-            position: relative !important;
-        }
-        
-        /* Specific menu container positioning */
-        .tox-menu {
-            position: absolute !important;
-            z-index: 2147483647 !important;
-        }
-        
-        /* Menu items and collections */
-        .tox-collection {
-            z-index: 2147483647 !important;
-            background: white !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-            border: 1px solid #ccc !important;
-        }
-        
-        /* Selected menu items */
-        .tox-selected-menu {
-            z-index: 2147483647 !important;
-        }
-        
         /* Hide RIGHT Moodle sidebars when drawer hiding is enabled */
         body.hide-drawer #block-region-side-post,
         body.hide-drawer .block-region:not(#block-region-side-pre),
