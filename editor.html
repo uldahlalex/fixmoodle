@@ -2,34 +2,44 @@
 tinymce.init({
     selector: "textarea",
     plugins: [
-        // Your existing plugins
-        "advlist", "anchor", "autolink", "charmap", "code", "fullscreen",
-        "help", "image", "insertdatetime", "link", "lists", "media",
-        "preview", "searchreplace", "table", "visualblocks",
+        // Core editing plugins
+        "advlist", "autolink", "link", "lists", "charmap", 
+        "searchreplace", "table", "code", "help",
         
-        // Popular additional plugins for TinyMCE 8
-        "accordion", "autosave", "codesample", "directionality", 
-        "emoticons", "importcss", "nonbreaking", "pagebreak", 
-        "quickbars", "save", "template", "visualchars", "wordcount"
+        // Media and content
+        "image", "media", "anchor", "insertdatetime",
+        
+        // UI and productivity  
+        "preview", "fullscreen", "visualblocks", "quickbars",
+        
+        // Advanced features
+        "codesample", "emoticons", "template", "wordcount",
+        "autosave", "accordion",
+        
+        // All the suggested popular plugins
+        "powerpaste", "checklist", "export", "footnotes", 
+        "pageembed", "permanentpen", "advcode", "advtable", 
+        "tableofcontents", "directionality", 
+        "nonbreaking", "pagebreak", "save", "visualchars"
     ],
     
-    // Enhanced toolbar with more features
+    // Comprehensive toolbar with all plugin features
     toolbar: [
-        "undo redo | styles fontsize | bold italic underline strikethrough | forecolor backcolor",
-        "alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | blockquote",
-        "link unlink image media table | codesample emoticons charmap | insertdatetime",
-        "searchreplace visualblocks visualchars | code preview fullscreen help"
+        "undo redo | styles | bold italic underline strikethrough | forecolor backcolor | permanentpen",
+        "alignleft aligncenter alignright alignjustify | bullist numlist checklist outdent indent | blockquote | ltr rtl",
+        "link unlink image media table | codesample emoticons charmap | insertdatetime footnotes pageembed",
+        "searchreplace visualblocks visualchars | tableofcontents export | code advcode preview fullscreen help"
     ],
     
-    // Enable menubar for full feature access
+    // Keep full menubar for complete access
     menubar: "file edit view insert format tools table help",
     
-    // Quick selection toolbar
-    quickbars_selection_toolbar: "bold italic underline | quicklink h2 h3 blockquote quicktable",
-    quickbars_insert_toolbar: "quickimage quicktable media codesample",
+    // Quick toolbars with more options
+    quickbars_selection_toolbar: "bold italic underline | quicklink h2 h3 blockquote | permanentpen footnotes",
+    quickbars_insert_toolbar: "quickimage quicktable codesample pageembed checklist",
     
-    // Enable context menu
-    contextmenu: "link image table configurepermanentpen",
+    // Enhanced context menu
+    contextmenu: "link image table | permanentpen footnotes | export",
     
     // Content styling
     content_style: `
@@ -41,27 +51,26 @@ tinymce.init({
             margin: 0 auto; 
         }
         blockquote { 
-            border-left: 3px solid #ccc; 
+            border-left: 3px solid #0066cc; 
             margin-left: 0; 
             padding-left: 16px; 
             font-style: italic; 
+            color: #555;
         }
     `,
     
-    // Code sample languages
+    // Code sample languages (kept most common ones)
     codesample_languages: [
         {text: 'HTML/XML', value: 'markup'},
         {text: 'JavaScript', value: 'javascript'},
         {text: 'CSS', value: 'css'},
         {text: 'Python', value: 'python'},
         {text: 'Java', value: 'java'},
-        {text: 'C#', value: 'csharp'},
         {text: 'PHP', value: 'php'},
-        {text: 'SQL', value: 'sql'},
-        {text: 'JSON', value: 'json'}
+        {text: 'SQL', value: 'sql'}
     ],
     
-    // Templates
+    // Useful templates
     templates: [
         {
             title: 'Article Template',
@@ -75,33 +84,22 @@ tinymce.init({
         }
     ],
     
-    // Auto-save settings
+    // Auto-save (very useful)
     autosave_ask_before_unload: true,
     autosave_interval: "30s",
     autosave_retention: "2m",
     
-    // Image upload handler (placeholder)
+    // Image handling
     images_upload_handler: function (blobInfo, success, failure) {
-        // In real implementation, upload to your server
-        // For demo purposes:
+        // Placeholder - replace with your upload logic
         success('https://picsum.photos/800/400');
     },
     
-    // File picker callback
-    file_picker_callback: function (callback, value, meta) {
-        if (meta.filetype === 'image') {
-            // In real implementation, open your file picker
-            // For demo:
-            callback('https://picsum.photos/800/400', {alt: 'Demo image'});
-        }
-    },
-    
-    // Additional useful settings
+    // Essential settings
     height: 500,
     resize: 'both',
     statusbar: true,
     browser_spellcheck: true,
-    contextmenu_never_use_native: true,
     
     // Smart paste
     smart_paste: true,
@@ -110,19 +108,31 @@ tinymce.init({
     table_use_colgroups: true,
     table_sizing_mode: 'responsive',
     
-    // Setup function for additional customization
-    setup: function (editor) {
-        // Custom button example
-        editor.ui.registry.addButton('customInsert', {
-            text: 'Custom',
-            tooltip: 'Insert custom content',
-            onAction: function () {
-                editor.insertContent('<p style="background-color: #f0f8ff; padding: 10px; border-left: 4px solid #0066cc;">💡 <strong>Custom Note:</strong> This is custom inserted content!</p>');
-            }
-        });
-        
-        // Add to toolbar by including 'customInsert' in toolbar array above
-    }
+    // Ensure styles dropdown works properly
+    style_formats_merge: false,
+    style_formats: [
+        {title: 'Headings', items: [
+            {title: 'Heading 1', format: 'h1'},
+            {title: 'Heading 2', format: 'h2'},
+            {title: 'Heading 3', format: 'h3'},
+            {title: 'Heading 4', format: 'h4'},
+            {title: 'Heading 5', format: 'h5'},
+            {title: 'Heading 6', format: 'h6'}
+        ]},
+        {title: 'Blocks', items: [
+            {title: 'Paragraph', format: 'p'},
+            {title: 'Blockquote', format: 'blockquote'},
+            {title: 'Div', format: 'div'},
+            {title: 'Pre', format: 'pre'}
+        ]},
+        {title: 'Inline', items: [
+            {title: 'Bold', format: 'strong'},
+            {title: 'Italic', format: 'em'},
+            {title: 'Underline', format: 'u'},
+            {title: 'Strikethrough', format: 'strikethrough'},
+            {title: 'Code', format: 'code'}
+        ]}
+    ]
 });
 </script>
 <form method="post" action="/dump">
