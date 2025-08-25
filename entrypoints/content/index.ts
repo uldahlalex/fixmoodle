@@ -31,6 +31,9 @@ export default defineContentScript({
             min-height: 80vh !important;
             height: 80vh !important;
         }
+        .tox-editor-container {
+            overflow: clip !important;
+        }
         
         .tox-edit-area {
             min-height: 75vh !important;
