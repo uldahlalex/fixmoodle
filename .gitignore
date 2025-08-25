@@ -16,7 +16,7 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
-
+debugging
 # TypeScript
 *.tsbuildinfo
 
