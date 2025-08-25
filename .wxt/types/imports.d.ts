@@ -3,6 +3,7 @@ export {}
 declare global {
   const ContentScriptContext: typeof import('wxt/client')['ContentScriptContext']
   const EditorUtils: typeof import('/home/alex/src/fixmoodle/utils/editor-utils')['EditorUtils']
+  const EnhancedTinyMCE: typeof import('/home/alex/src/fixmoodle/utils/enhanced-editor')['EnhancedTinyMCE']
   const InvalidMatchPattern: typeof import('wxt/sandbox')['InvalidMatchPattern']
   const MatchPattern: typeof import('wxt/sandbox')['MatchPattern']
   const MigrationError: typeof import('wxt/storage')['MigrationError']
@@ -27,6 +28,9 @@ declare global {
   // @ts-ignore
   export type { EditorUtils } from '/home/alex/src/fixmoodle/utils/editor-utils'
   import('/home/alex/src/fixmoodle/utils/editor-utils')
+  // @ts-ignore
+  export type { EnhancedTinyMCE } from '/home/alex/src/fixmoodle/utils/enhanced-editor'
+  import('/home/alex/src/fixmoodle/utils/enhanced-editor')
   // @ts-ignore
   export type { SettingsStorage } from '/home/alex/src/fixmoodle/utils/storage'
   import('/home/alex/src/fixmoodle/utils/storage')

@@ -1,5 +1,6 @@
 import { SettingsStorage } from '~/utils/storage';
 import { EditorUtils } from '~/utils/editor-utils';
+import { EnhancedTinyMCE } from '~/utils/enhanced-editor';
 import type { ExtensionSettings, MessageRequest, MessageResponse } from '~/types/settings';
 
 export default defineContentScript({
@@ -27,6 +28,63 @@ export default defineContentScript({
         /* Moodle TinyMCE Auto-Resizer Styles */
         
         /* Force maximum height on TinyMCE containers (fallback) */
+        
+        
+.tox-editor-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1002 !important;
+    background-color: #f4f4f4 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.tox-menubar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2147483647 !important;
+    background-color: #f4f4f4 !important;
+    margin: 0 !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    width: 100% !important;
+    border-bottom: 1px solid #ddd !important;
+}
+
+/* Force TinyMCE container to be visible */
+.tox.tox-tinymce {
+    visibility: visible !important;
+}
+
+/* Force the entire editor header to stick to top of viewport */
+.tox-editor-container .tox-editor-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 2147483647 !important;
+    background: #f4f4f4 !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
+    width: 100% !important;
+}
+
+/* Ensure menubar within header is also properly positioned */
+.tox-editor-header .tox-menubar {
+    position: relative !important;
+    z-index: 2147483648 !important;
+    background: #f4f4f4 !important;
+    width: 100% !important;
+}
+
+/* Adjust editor content to account for fixed header */
+.tox-edit-area {
+    padding-top: 80px !important;
+}
+
+.tox-toolbar-overlord {
+    position: sticky !important;
+    top: 30px !important;
+    z-index: 1001 !important;
+    background-color: #f4f4f4 !important;
+}
         .tox.tox-tinymce {
             min-height: 80vh !important;
             height: 80vh !important;
@@ -59,12 +117,10 @@ export default defineContentScript({
             border-radius: 3px !important;
         }
         
-        /* Sticky toolbar to prevent it from going out of view when scrolling */
-        .tox-toolbar,
-        .tox-toolbar-overlord,
-        .tox-menubar {
+        /* Additional toolbar styling for better visibility */
+        .tox-toolbar {
             position: sticky !important;
-            top: 0 !important;
+            top: 60px !important;
             z-index: 1000 !important;
             background-color: #f4f4f4 !important;
             border-bottom: 1px solid #ccc !important;
@@ -74,6 +130,14 @@ export default defineContentScript({
         .tox-toolbar__primary {
             position: relative !important;
             z-index: 1001 !important;
+        }
+        
+        /* Make sure the entire TinyMCE header area sticks */
+        .tox-editor-header, .tox-menubar, .tox-toolbar-overlord, .tox-toolbar {
+            position: -webkit-sticky !important;
+            position: sticky !important;
+            background: #f4f4f4 !important;
+            border-bottom: 1px solid #ddd !important;
         }
         
         /* Hide RIGHT Moodle sidebars when drawer hiding is enabled */
@@ -203,14 +267,14 @@ export default defineContentScript({
     async function loadAndApplySettings(): Promise<void> {
       try {
         currentSettings = await SettingsStorage.get();
-        applySettings();
+        await applySettings();
       } catch (error) {
         console.error('Failed to load settings:', error);
       }
     }
 
     // Apply current settings to the page
-    function applySettings(): void {
+    async function applySettings(): Promise<void> {
       // Apply both drawer hiding and editor maximization when maximizeEditor is enabled
       if (currentSettings.maximizeEditor) {
         document.body.classList.add('hide-drawer');
@@ -220,6 +284,27 @@ export default defineContentScript({
         document.body.classList.remove('hide-drawer');
         document.body.classList.remove('maximize-editor');
         EditorUtils.resetEditors();
+      }
+
+      // Handle enhanced TinyMCE
+      if (currentSettings.enhancedTinyMCE) {
+        if (!EnhancedTinyMCE.hasEnhancedEditors()) {
+          try {
+            await EnhancedTinyMCE.replaceEditors();
+            console.log('Enhanced TinyMCE editors initialized');
+          } catch (error) {
+            console.error('Failed to initialize enhanced TinyMCE:', error);
+          }
+        }
+      } else {
+        if (EnhancedTinyMCE.hasEnhancedEditors()) {
+          try {
+            await EnhancedTinyMCE.restoreOriginalEditors();
+            console.log('Restored original TinyMCE editors');
+          } catch (error) {
+            console.error('Failed to restore original TinyMCE:', error);
+          }
+        }
       }
     }
 
@@ -244,8 +329,12 @@ export default defineContentScript({
     ) => {
       if (request.action === 'updateSettings') {
         currentSettings = request.settings;
-        applySettings();
-        sendResponse({ success: true });
+        applySettings().then(() => {
+          sendResponse({ success: true });
+        }).catch((error) => {
+          console.error('Failed to apply settings:', error);
+          sendResponse({ success: false });
+        });
       }
       return true; // Keep message channel open for async response
     });
@@ -277,7 +366,7 @@ export default defineContentScript({
     }
 
     // Initialize
-    function init(): void {
+    async function init(): Promise<void> {
       // Only proceed if this is an editing page
       if (!isEditingPage()) {
         console.log('TinyMCE Auto-Resizer: Not an editing page, skipping initialization');
@@ -286,16 +375,23 @@ export default defineContentScript({
       
       console.log('TinyMCE Auto-Resizer: Initializing on editing page');
       injectStyles();
-      loadAndApplySettings();
+      await loadAndApplySettings();
       setupEditorObservation();
       window.addEventListener('resize', handleResize);
 
       // Fallback - run periodically for the first few seconds
       let attempts = 0;
       const maxAttempts = 10;
-      const interval = setInterval(() => {
+      const interval = setInterval(async () => {
         if (currentSettings?.maximizeEditor) {
           EditorUtils.resizeEditors();
+        }
+        if (currentSettings?.enhancedTinyMCE && !EnhancedTinyMCE.hasEnhancedEditors()) {
+          try {
+            await EnhancedTinyMCE.replaceEditors();
+          } catch (error) {
+            console.error('Fallback enhanced TinyMCE initialization failed:', error);
+          }
         }
         attempts++;
         if (attempts >= maxAttempts) {
@@ -307,10 +403,10 @@ export default defineContentScript({
     // Run when DOM is ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(init, 500);
+        setTimeout(() => init().catch(console.error), 500);
       });
     } else {
-      init();
+      init().catch(console.error);
     }
 
     // Cleanup on page unload
