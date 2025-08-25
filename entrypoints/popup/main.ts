@@ -3,15 +3,13 @@ import type { ExtensionSettings, MessageRequest } from '~/types/settings';
 
 class PopupController {
   private maximizeEditorToggle: HTMLInputElement;
-  private enhancedTinyMCEToggle: HTMLInputElement;
   private statusElement: HTMLElement;
 
   constructor() {
     this.maximizeEditorToggle = document.getElementById('maximizeEditor') as HTMLInputElement;
-    this.enhancedTinyMCEToggle = document.getElementById('enhancedTinyMCE') as HTMLInputElement;
     this.statusElement = document.getElementById('status') as HTMLElement;
 
-    if (!this.maximizeEditorToggle || !this.enhancedTinyMCEToggle || !this.statusElement) {
+    if (!this.maximizeEditorToggle || !this.statusElement) {
       throw new Error('Required DOM elements not found');
     }
 
@@ -32,16 +30,11 @@ class PopupController {
   private async loadSettings(): Promise<void> {
     const settings = await SettingsStorage.get();
     this.maximizeEditorToggle.checked = settings.maximizeEditor;
-    this.enhancedTinyMCEToggle.checked = settings.enhancedTinyMCE;
   }
 
   private setupEventListeners(): void {
     this.maximizeEditorToggle.addEventListener('change', () => {
       this.handleSettingChange('maximizeEditor', this.maximizeEditorToggle.checked);
-    });
-    
-    this.enhancedTinyMCEToggle.addEventListener('change', () => {
-      this.handleSettingChange('enhancedTinyMCE', this.enhancedTinyMCEToggle.checked);
     });
   }
 
@@ -58,22 +51,11 @@ class PopupController {
 
   private updateStatus(): void {
     let statusText = '';
-    const features = [];
-    
     if (this.maximizeEditorToggle.checked) {
-      features.push('Maximized');
-    }
-    
-    if (this.enhancedTinyMCEToggle.checked) {
-      features.push('Enhanced Editor');
-    }
-    
-    if (features.length > 0) {
-      statusText = `Active: ${features.join(', ')}`;
+      statusText = 'Editor maximized';
     } else {
-      statusText = 'No enhancements active';
+      statusText = 'Editor enhancement disabled';
     }
-    
     this.statusElement.textContent = statusText;
   }
 
