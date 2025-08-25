@@ -16,6 +16,7 @@ export default defineContentScript({
     let currentSettings: ExtensionSettings;
     let mutationObserver: MutationObserver | null = null;
     let stylesInjected = false;
+    let periodicCheckInterval: NodeJS.Timeout | null = null;
 
     function injectStyles(): void {
       if (stylesInjected) return;
@@ -166,6 +167,14 @@ export default defineContentScript({
       stylesInjected = true;
     }
 
+    function removeStyles(): void {
+      const existingStyle = document.getElementById('moodle-tinymce-auto-resizer-styles');
+      if (existingStyle) {
+        existingStyle.remove();
+        stylesInjected = false;
+      }
+    }
+
     async function loadAndApplySettings(): Promise<void> {
       try {
         currentSettings = await SettingsStorage.get();
@@ -177,26 +186,40 @@ export default defineContentScript({
 
     function applySettings(): void {
       if (currentSettings.maximizeEditor) {
+        injectStyles();
         document.body.classList.add('hide-drawer');
         document.body.classList.add('maximize-editor');
         EditorUtils.resizeEditors();
+        startPeriodicCheck();
       } else {
+        removeStyles();
         document.body.classList.remove('hide-drawer');
         document.body.classList.remove('maximize-editor');
         EditorUtils.resetEditors();
+        stopPeriodicCheck();
       }
     }
 
     function setupEditorObservation(): void {
       if (mutationObserver) {
         mutationObserver.disconnect();
+        mutationObserver = null;
       }
       
-      mutationObserver = EditorUtils.observeEditorChanges(() => {
-        if (currentSettings.maximizeEditor) {
-          EditorUtils.resizeEditors();
-        }
-      });
+      if (currentSettings.maximizeEditor) {
+        mutationObserver = EditorUtils.observeEditorChanges(() => {
+          if (currentSettings.maximizeEditor) {
+            EditorUtils.resizeEditors();
+          }
+        });
+      }
+    }
+
+    function cleanupObservation(): void {
+      if (mutationObserver) {
+        mutationObserver.disconnect();
+        mutationObserver = null;
+      }
     }
 
     browser.runtime.onMessage.addListener((
@@ -207,6 +230,7 @@ export default defineContentScript({
       if (request.action === 'updateSettings') {
         currentSettings = request.settings;
         applySettings();
+        setupEditorObservation();
         sendResponse({ success: true });
       }
       return true;
@@ -235,6 +259,34 @@ export default defineContentScript({
       return editingPatterns.some(pattern => pattern.test(url) || pattern.test(pathname));
     }
 
+    function startPeriodicCheck(): void {
+      if (periodicCheckInterval) {
+        clearInterval(periodicCheckInterval);
+      }
+      
+      if (currentSettings?.maximizeEditor) {
+        let attempts = 0;
+        const maxAttempts = 10;
+        periodicCheckInterval = setInterval(() => {
+          if (currentSettings?.maximizeEditor) {
+            EditorUtils.resizeEditors();
+          }
+          attempts++;
+          if (attempts >= maxAttempts) {
+            clearInterval(periodicCheckInterval!);
+            periodicCheckInterval = null;
+          }
+        }, 1000);
+      }
+    }
+
+    function stopPeriodicCheck(): void {
+      if (periodicCheckInterval) {
+        clearInterval(periodicCheckInterval);
+        periodicCheckInterval = null;
+      }
+    }
+
     function init(): void {
       if (!isEditingPage()) {
         console.log('TinyMCE Auto-Resizer: Not an editing page, skipping initialization');
@@ -242,22 +294,11 @@ export default defineContentScript({
       }
       
       console.log('TinyMCE Auto-Resizer: Initializing on editing page');
-      injectStyles();
-      loadAndApplySettings();
-      setupEditorObservation();
+      loadAndApplySettings().then(() => {
+        setupEditorObservation();
+        startPeriodicCheck();
+      });
       window.addEventListener('resize', handleResize);
-
-      let attempts = 0;
-      const maxAttempts = 10;
-      const interval = setInterval(() => {
-        if (currentSettings?.maximizeEditor) {
-          EditorUtils.resizeEditors();
-        }
-        attempts++;
-        if (attempts >= maxAttempts) {
-          clearInterval(interval);
-        }
-      }, 1000);
     }
 
     if (document.readyState === 'loading') {
@@ -269,9 +310,8 @@ export default defineContentScript({
     }
 
     window.addEventListener('beforeunload', () => {
-      if (mutationObserver) {
-        mutationObserver.disconnect();
-      }
+      cleanupObservation();
+      stopPeriodicCheck();
       window.removeEventListener('resize', handleResize);
     });
   },
