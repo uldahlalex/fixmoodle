@@ -1,13 +1,13 @@
 # Moodle TinyMCE Auto-Resizer
 
 Browser extension that expands TinyMCE editors on Moodle sites. Activates only on editing pages.
-
+[![GitHub release](https://img.shields.io/github/release/uldahlalex/fixmoodle.svg)](https://github.com/uldahlalex/fixmoodle/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <b>Before:</b>
 <br/>
 <img src="docs/before.png" style="max-width: 600px">
 
-[![GitHub release](https://img.shields.io/github/release/uldahlalex/fixmoodle.svg)](https://github.com/uldahlalex/fixmoodle/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 
 <b>After:</b>
 <br />
